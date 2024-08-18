@@ -31,6 +31,15 @@ public class UserSteps {
                 .then();
     }
 
+    @Step("Изменения данных пользователя без авторизации")
+    public ValidatableResponse changeUserDataWithoutAuth(User user) {
+        return given(BaseHttpClient.baseRequestSpec())
+                .body(user)
+                .when()
+                .patch(USER_ENDPOINT)
+                .then();
+    }
+
     @Step("Удаление пользователя")
     public void deleteUser(String accessToken){
         given(BaseHttpClient.baseRequestSpec())

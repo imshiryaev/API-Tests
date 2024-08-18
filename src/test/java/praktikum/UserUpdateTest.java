@@ -10,12 +10,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class UserTest {
-
+public class UserUpdateTest {
     private UserSteps userSteps = new UserSteps();
     private User user;
     private String accessToken;
-
     @Before
     public void setUp(){
         user = new User();
@@ -24,40 +22,10 @@ public class UserTest {
         user.setName(RandomStringUtils.randomAlphabetic(8));
     }
 
-    @Test
-    @DisplayName("Проверка создания нового пользователя")
-    public void userCreateTest() {
-        userSteps.createUser(user).statusCode(200).body("success", Matchers.is(true));
+    @After
+    public void tearDown(){
+        if (accessToken != null) userSteps.deleteUser(accessToken);
     }
-
-    @Test
-    @DisplayName("Проверка создания пользователя, который уже зарегистрирован")
-    public void userDoubleCreateTest(){
-        userSteps.createUser(user);
-        userSteps.createUser(user).statusCode(403).body("success", Matchers.is(false)).body("message", Matchers.is("User already exists"));
-    }
-    @Test
-    @DisplayName("Проверка создания пользователя, без заполнения пароля")
-    public void userCreateWithoutPasswordTest(){
-        user.setPassword(null);
-        userSteps.createUser(user).statusCode(403).body("success", Matchers.is(false)).body("message", Matchers.is("Email, password and name are required fields"));
-    }
-
-    @Test
-    @DisplayName("Проверка авторизации пользователя с существующим логином и паролем")
-    public void userAuthTest(){
-        userSteps.createUser(user);
-        userSteps.authUser(user).statusCode(200).body("success", Matchers.is(true));
-    }
-
-    @Test
-    @DisplayName("Проверка авторизации пользователя c неверным логином и паролем")
-    public void userAuthWithoutPasswordTest(){
-        userSteps.createUser(user);
-        user.setPassword("etjbmpobeiomptrbromip2345");
-        userSteps.authUser(user).statusCode(401).body("success", Matchers.is(false)).body("message", Matchers.is("email or password are incorrect"));
-    }
-
     @Test
     @DisplayName("Проверка изменения email пользователя с авторизацией")
     public void userUpdateEmailWithAuth() {
@@ -94,16 +62,11 @@ public class UserTest {
     @Test
     @DisplayName("Проверка изменения данных пользователя без авторизации")
     public void userChangeDataWithoutAuth() {
-        userSteps.createUser(user);
+        ValidatableResponse response = userSteps.createUser(user);
+        accessToken = response.extract().path("accessToken");
         user.setEmail(null);
         user.setPassword(RandomStringUtils.randomAlphabetic(7));
         user.setName(null);
-        accessToken = "";
-        userSteps.changeUserData(user, accessToken).statusCode(401).body("success", Matchers.is(false)).body("message",Matchers.is("You should be authorised"));
-    }
-
-    @After
-    public void tearDown(){
-        if (accessToken != null) userSteps.deleteUser(accessToken);
+        userSteps.changeUserDataWithoutAuth(user).statusCode(401).body("success", Matchers.is(false)).body("message",Matchers.is("You should be authorised"));
     }
 }
