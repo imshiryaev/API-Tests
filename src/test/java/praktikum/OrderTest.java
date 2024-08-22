@@ -3,7 +3,6 @@ package praktikum;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.http.HttpStatus;
 import org.example.model.Order;
 import org.example.model.User;
 import org.example.steps.OrderSteps;
@@ -14,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -48,7 +46,7 @@ public class OrderTest {
     }
 
     @Test
-    @DisplayName("Проверка создания заказа с авторизацией")
+    @DisplayName("Проверка создания заказа без авторизации")
     public void orderTestWithoutAuth() {
         ValidatableResponse response = userSteps.createUser(user);
         accessToken = response.extract().path("accessToken");
@@ -69,7 +67,7 @@ public class OrderTest {
         ValidatableResponse response = userSteps.createUser(user);
         accessToken = response.extract().path("accessToken");
 
-        ArrayList<String> emptyArrayList = new ArrayList<String>();
+        ArrayList<String> emptyArrayList = new ArrayList<>();
 
         orderSteps.createOrder(new Order(emptyArrayList), accessToken).statusCode(400).body("success", Matchers.is(false)).body("message", Matchers.is("Ingredient ids must be provided"));
     }
@@ -79,7 +77,7 @@ public class OrderTest {
         ValidatableResponse response = userSteps.createUser(user);
         accessToken = response.extract().path("accessToken");
 
-        ArrayList<String> brokenHash = new ArrayList<String>();
+        ArrayList<String> brokenHash = new ArrayList<>();
         brokenHash.add("45ghtrehrteh");
 
         orderSteps.createOrder(new Order(brokenHash), accessToken).statusCode(500).body("success", Matchers.is(false));

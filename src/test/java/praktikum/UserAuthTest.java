@@ -14,6 +14,7 @@ public class UserAuthTest {
     private UserSteps userSteps = new UserSteps();
     private User user;
     private String accessToken;
+
     @Before
     public void setUp(){
         user = new User();

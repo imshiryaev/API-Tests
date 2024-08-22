@@ -5,8 +5,6 @@ import io.restassured.response.ValidatableResponse;
 import org.example.config.BaseHttpClient;
 import org.example.model.Order;
 
-import java.util.List;
-
 import static io.restassured.RestAssured.given;
 
 public class OrderSteps {

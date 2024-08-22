@@ -53,6 +53,6 @@ public class GetOrderTest {
         ValidatableResponse response = userSteps.createUser(user);
         accessToken = response.extract().path("accessToken");
         orderSteps.createOrder(order, accessToken);
-        orderSteps.getOrdersWithAuth("").statusCode(401).body("success", Matchers.is(false)).body("message", Matchers.is("You should be authorised"));;
+        orderSteps.getOrdersWithAuth("").statusCode(401).body("success", Matchers.is(false)).body("message", Matchers.is("You should be authorised"));
     }
 }
